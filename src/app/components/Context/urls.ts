@@ -1,18 +1,24 @@
 export const urls = [{
-  url: "https://e360.yale.edu/digest/indonesia-malaysia-deforestation",
-  title: "Indonesia Deforestation",
+  url: "https://sarahokelley.substack.com/",
+  title: "Grape to Table",
   seeded: false,
   loading: false,
 },
 {
-  url: "https://cleantechnica.com/2023/06/29/solar-82-of-power-capacity-growth-in-india-in-2022/",
-  title: "Solar Power in India",
+  url: "https://docs.google.com/document/d/1yKEcbaJUWe8Gv9qnIJgKo7k09XA_1hy7KxCw-WKF_7w/",
+  title: "Jaco Dogsitting",
   seeded: false,
   loading: false,
 },
 {
-  url: "https://www.cbssports.com/nba/news/matisse-thybulle-to-stay-with-blazers-who-match-mavericks-three-year-33-million-deal-per-report/",
-  title: "Matisee Thybulle",
+  url: "https://forecast.weather.gov/MapClick.php?x=273&y=107&site=chs&zmx=&zmy=&map_x=273&map_y=107",
+  title: "forecast.weather.gov - Charleston SC",
+  seeded: false,
+  loading: false,
+},
+{
+  url: "https://www.windfinder.com/weatherforecast/folly_island",
+  title: "Windfinder Folly Beach",
   seeded: false,
   loading: false,
 }]
