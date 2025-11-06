@@ -8,6 +8,7 @@ import Header from "@/components/Header";
 import Chat from "@/components/Chat";
 import { useChat } from "ai/react";
 import InstructionModal from "./components/InstructionModal";
+import UserMenu from "./components/UserMenu";
 import { AiFillGithub, AiOutlineInfoCircle } from "react-icons/ai";
 
 const Page: React.FC = () => {
@@ -76,6 +77,10 @@ const Page: React.FC = () => {
       >
         <AiOutlineInfoCircle />
       </button>
+
+      <div className="fixed left-4 top-16 md:left-6 md:top-20 z-10">
+        <UserMenu />
+      </div>
 
       <InstructionModal
         isOpen={isModalOpen}

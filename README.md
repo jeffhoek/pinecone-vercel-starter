@@ -26,6 +26,19 @@ npm install ai
 
 You can use the [full list](https://github.com/pinecone-io/pinecone-vercel-example/blob/main/package.json) of dependencies if you'd like to build along with the tutorial.
 
+## Authentication (Required)
+
+This application uses Google OAuth for authentication to restrict access to authorized users only. All routes are protected and require users to sign in with their Google account.
+
+**See [GOOGLE_OAUTH_SETUP.md](./GOOGLE_OAUTH_SETUP.md) for detailed setup instructions.**
+
+Quick summary:
+1. Create a Google Cloud OAuth 2.0 application
+2. Configure authorized redirect URIs
+3. Add `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` to environment variables
+4. Generate and add `NEXTAUTH_SECRET` to environment variables
+5. Optionally restrict access to specific email addresses
+
 ## Google Docs Authentication (Optional)
 
 If you want to crawl private Google Docs, you'll need to set up Google Service Account authentication. This allows your application to access Google Docs that have been shared with the service account.
