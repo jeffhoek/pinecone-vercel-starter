@@ -17,6 +17,18 @@ export const urls = [{
   loading: false,
 },
 {
+  url: "https://thehackernews.com/",
+  title: "The Hacker News",
+  seeded: false,
+  loading: false,
+},
+{
+  url: "https://phoenixnap.com/kb/linux-commands-cheat-sheet",
+  title: "Linux Commands Cheat Sheet - phoenixNAP",
+  seeded: false,
+  loading: false,
+},
+{
   url: "https://www.windfinder.com/weatherforecast/folly_island",
   title: "Windfinder Folly Beach",
   seeded: false,
