@@ -1,5 +1,6 @@
 import cheerio from 'cheerio';
 import { NodeHtmlMarkdown } from 'node-html-markdown';
+import { isGoogleDocsUrl, extractGoogleDocId, fetchGoogleDocContent } from '../../utils/googleDrive';
 
 interface Page {
   url: string;
@@ -64,6 +65,19 @@ class Crawler {
 
   private async fetchPage(url: string): Promise<string> {
     try {
+      // Check if this is a Google Docs URL
+      if (isGoogleDocsUrl(url)) {
+        const docId = extractGoogleDocId(url);
+        if (!docId) {
+          console.error(`Could not extract document ID from URL: ${url}`);
+          return '';
+        }
+
+        console.log(`Fetching Google Doc with ID: ${docId}`);
+        return await fetchGoogleDocContent(docId);
+      }
+
+      // For non-Google Docs URLs, use regular fetch
       const response = await fetch(url);
       return await response.text();
     } catch (error) {

@@ -2,7 +2,9 @@ import seed from './seed'
 import { NextResponse } from 'next/server';
 import { ServerlessSpecCloudEnum } from '@pinecone-database/pinecone'
 
-export const runtime = 'edge'
+// Changed from 'edge' to 'nodejs' to support googleapis library
+// which requires full Node.js APIs (http, https, worker_threads, etc.)
+export const runtime = 'nodejs'
 
 export async function POST(req: Request) {
 
