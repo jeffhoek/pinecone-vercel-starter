@@ -26,6 +26,21 @@ npm install ai
 
 You can use the [full list](https://github.com/pinecone-io/pinecone-vercel-example/blob/main/package.json) of dependencies if you'd like to build along with the tutorial.
 
+## Google Docs Authentication (Optional)
+
+If you want to crawl private Google Docs, you'll need to set up Google Service Account authentication. This allows your application to access Google Docs that have been shared with the service account.
+
+**See [GOOGLE_AUTH_SETUP.md](./GOOGLE_AUTH_SETUP.md) for detailed setup instructions.**
+
+Quick summary:
+1. Create a Google Cloud service account
+2. Enable Google Drive API
+3. Download the service account JSON key
+4. Add `GOOGLE_SERVICE_ACCOUNT_KEY` to your environment variables
+5. Share your Google Docs with the service account email
+
+Without this setup, the application can still crawl public web pages but will not be able to access private Google Docs.
+
 ## Step 2: Create the Chatbot
 
 In this step, we're going to use the Vercel SDK to establish the backend and frontend of our chatbot within the Next.js application. By the end of this step, our basic chatbot will be up and running, ready for us to add context-aware capabilities in the following stages. Let's get started.
