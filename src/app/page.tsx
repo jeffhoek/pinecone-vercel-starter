@@ -16,6 +16,9 @@ const Page: React.FC = () => {
   const [context, setContext] = useState<string[] | null>(null);
   const [isModalOpen, setModalOpen] = useState(false);
 
+  // Check if admin panel should be shown (defaults to true if not set)
+  const showAdminPanel = process.env.NEXT_PUBLIC_SHOW_ADMIN_PANEL !== 'false';
+
   const { messages, input, handleInputChange, handleSubmit } = useChat({
     onFinish: async () => {
       setGotMessages(true);
@@ -42,12 +45,13 @@ const Page: React.FC = () => {
       const { context } = await response.json();
       setContext(context.map((c: any) => c.id));
     };
-    if (gotMessages && messages.length >= prevMessagesLengthRef.current) {
+    // Only fetch context if admin panel is visible
+    if (showAdminPanel && gotMessages && messages.length >= prevMessagesLengthRef.current) {
       getContext();
     }
 
     prevMessagesLengthRef.current = messages.length;
-  }, [messages, gotMessages]);
+  }, [messages, gotMessages, showAdminPanel]);
 
   return (
     <div className="flex flex-col justify-between h-screen bg-gray-800 p-2 mx-auto max-w-full">
@@ -87,26 +91,32 @@ const Page: React.FC = () => {
         onClose={() => setModalOpen(false)}
       />
       <div className="flex w-full flex-grow overflow-hidden relative">
-        <Chat
-          input={input}
-          handleInputChange={handleInputChange}
-          handleMessageSubmit={handleMessageSubmit}
-          messages={messages}
-        />
-        <div className="absolute transform translate-x-full transition-transform duration-500 ease-in-out right-0 w-2/3 h-full bg-gray-700 overflow-y-auto lg:static lg:translate-x-0 lg:w-2/5 lg:mx-2 rounded-lg">
-          <Context className="" selected={context} />
+        <div className={`flex flex-col ${showAdminPanel ? 'w-full lg:w-3/5' : 'w-full'} mr-4 mx-5 lg:mx-0`}>
+          <Chat
+            input={input}
+            handleInputChange={handleInputChange}
+            handleMessageSubmit={handleMessageSubmit}
+            messages={messages}
+          />
         </div>
-        <button
-          type="button"
-          className="absolute left-20 transform -translate-x-12 bg-gray-800 text-white rounded-l py-2 px-4 lg:hidden"
-          onClick={(e) => {
-            e.currentTarget.parentElement
-              ?.querySelector(".transform")
-              ?.classList.toggle("translate-x-full");
-          }}
-        >
-          ☰
-        </button>
+        {showAdminPanel && (
+          <>
+            <div className="absolute transform translate-x-full transition-transform duration-500 ease-in-out right-0 w-2/3 h-full bg-gray-700 overflow-y-auto lg:static lg:translate-x-0 lg:w-2/5 lg:mx-2 rounded-lg">
+              <Context className="" selected={context} />
+            </div>
+            <button
+              type="button"
+              className="absolute left-20 transform -translate-x-12 bg-gray-800 text-white rounded-l py-2 px-4 lg:hidden"
+              onClick={(e) => {
+                e.currentTarget.parentElement
+                  ?.querySelector(".transform")
+                  ?.classList.toggle("translate-x-full");
+              }}
+            >
+              ☰
+            </button>
+          </>
+        )}
       </div>
     </div>
   );

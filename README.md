@@ -39,6 +39,19 @@ Quick summary:
 4. Generate and add `NEXTAUTH_SECRET` to environment variables
 5. Optionally restrict access to specific email addresses
 
+## Admin Panel (Optional)
+
+The application includes an admin panel (right-hand side panel) that allows you to:
+- Crawl and index new documents
+- Clear the Pinecone index
+- Configure document splitting methods
+
+You can control the visibility of this panel using the `NEXT_PUBLIC_SHOW_ADMIN_PANEL` environment variable:
+- Set to `true` (or omit) to show the panel in local development
+- Set to `false` to hide the panel in production deployments
+
+This allows you to manage your dataset locally while preventing end users from modifying the index in production.
+
 ## Google Docs Authentication (Optional)
 
 If you want to crawl private Google Docs, you'll need to set up Google Service Account authentication. This allows your application to access Google Docs that have been shared with the service account.
