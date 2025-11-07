@@ -27,6 +27,7 @@ const Page: React.FC = () => {
   });
 
   const prevMessagesLengthRef = useRef(messages.length);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const handleMessageSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -37,6 +38,10 @@ const Page: React.FC = () => {
 
   const handleQuerySelect = (query: string) => {
     setInput(query);
+    // Focus the input field after setting the query
+    setTimeout(() => {
+      inputRef.current?.focus();
+    }, 0);
   };
 
   useEffect(() => {
@@ -104,6 +109,7 @@ const Page: React.FC = () => {
               handleInputChange={handleInputChange}
               handleMessageSubmit={handleMessageSubmit}
               messages={messages}
+              inputRef={inputRef}
             />
           </div>
         </div>

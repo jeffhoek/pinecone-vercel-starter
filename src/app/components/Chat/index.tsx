@@ -1,6 +1,6 @@
 // Chat.tsx
 
-import React, { FormEvent, ChangeEvent } from "react";
+import React, { FormEvent, ChangeEvent, RefObject } from "react";
 import Messages from "./Messages";
 import { Message } from "ai/react";
 
@@ -9,6 +9,7 @@ interface Chat {
   handleInputChange: (e: ChangeEvent<HTMLInputElement>) => void;
   handleMessageSubmit: (e: FormEvent<HTMLFormElement>) => Promise<void>;
   messages: Message[];
+  inputRef?: RefObject<HTMLInputElement>;
 }
 
 const Chat: React.FC<Chat> = ({
@@ -16,6 +17,7 @@ const Chat: React.FC<Chat> = ({
   handleInputChange,
   handleMessageSubmit,
   messages,
+  inputRef,
 }) => {
   return (
     <div id="chat" className="flex flex-col w-full h-full overflow-hidden">
@@ -27,6 +29,7 @@ const Chat: React.FC<Chat> = ({
         className="mt-5 mb-5 relative bg-gray-700 rounded-lg flex-shrink-0"
       >
         <input
+          ref={inputRef}
           type="text"
           className="input-glow appearance-none border rounded w-full py-2 px-3 text-gray-200 leading-tight focus:outline-none focus:shadow-outline pl-3 pr-10 bg-gray-600 border-gray-600 transition-shadow duration-200"
           value={input}
