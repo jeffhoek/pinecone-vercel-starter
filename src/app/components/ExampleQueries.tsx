@@ -10,11 +10,12 @@ interface ExampleQueriesProps {
 const EXAMPLE_QUERIES = [
   "What are Jaco's favorite activities?",
   "What should I know about feeding Jaco?",
-  "other dogs?",
-  "walking schedule?",
   "What is Jaco's walking schedule?",
+  "Dog poop disposal instructions?",
+  "Any issues with other dogs?",
   "Does Jaco have any health concerns?",
-  "health concerns?"
+  "Which remote to use for cable TV?",
+  "When to take the trash out?"
 ];
 
 export const ExampleQueries: React.FC<ExampleQueriesProps> = ({ onQuerySelect }) => {
