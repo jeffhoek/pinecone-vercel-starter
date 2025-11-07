@@ -104,10 +104,17 @@ vercel
 |----------|-------|-------------|
 | `GOOGLE_SERVICE_ACCOUNT_KEY` | Minified JSON key (single line) | Production, Preview, Development |
 | `PINECONE_NAMESPACE` | Custom namespace (default: empty string) | Production, Preview, Development |
+| `NEXT_PUBLIC_SHOW_ADMIN_PANEL` | `true` to show admin panel, `false` to hide (default: `true`) | Production, Preview, Development |
+| `NEXTAUTH_URL` | Your application URL (e.g., `https://your-app.vercel.app`) | Production, Preview, Development |
+| `NEXTAUTH_SECRET` | Random secret from `openssl rand -base64 32` | Production, Preview, Development |
+| `GOOGLE_CLIENT_ID` | Google OAuth Client ID | Production, Preview, Development |
+| `GOOGLE_CLIENT_SECRET` | Google OAuth Client Secret | Production, Preview, Development |
+| `ALLOWED_EMAILS` | Comma-separated list of allowed emails (optional) | Production, Preview, Development |
 
 **Important Notes:**
 - Make sure to enable the variables for all environments (Production, Preview, Development)
 - After adding/updating environment variables, you must redeploy for changes to take effect
+- **Admin Panel Tip**: Set `NEXT_PUBLIC_SHOW_ADMIN_PANEL=false` in Production to hide dataset management features from end users
 
 ## Step 5: Redeploy After Adding Environment Variables
 
