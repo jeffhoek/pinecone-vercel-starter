@@ -9,6 +9,7 @@ import Chat from "@/components/Chat";
 import { useChat } from "ai/react";
 import InstructionModal from "./components/InstructionModal";
 import UserMenu from "./components/UserMenu";
+import { ExampleQueries } from "./components/ExampleQueries";
 import { AiFillGithub, AiOutlineInfoCircle } from "react-icons/ai";
 
 const Page: React.FC = () => {
@@ -19,7 +20,7 @@ const Page: React.FC = () => {
   // Check if admin panel should be shown (defaults to true if not set)
   const showAdminPanel = process.env.NEXT_PUBLIC_SHOW_ADMIN_PANEL !== 'false';
 
-  const { messages, input, handleInputChange, handleSubmit } = useChat({
+  const { messages, input, handleInputChange, handleSubmit, setInput } = useChat({
     onFinish: async () => {
       setGotMessages(true);
     },
@@ -32,6 +33,10 @@ const Page: React.FC = () => {
     handleSubmit(e);
     setContext(null);
     setGotMessages(false);
+  };
+
+  const handleQuerySelect = (query: string) => {
+    setInput(query);
   };
 
   useEffect(() => {
@@ -91,13 +96,16 @@ const Page: React.FC = () => {
         onClose={() => setModalOpen(false)}
       />
       <div className="flex w-full flex-grow overflow-hidden relative">
-        <div className={`flex flex-col ${showAdminPanel ? 'w-full lg:w-3/5' : 'w-full'} mr-4 mx-5 lg:mx-0`}>
-          <Chat
-            input={input}
-            handleInputChange={handleInputChange}
-            handleMessageSubmit={handleMessageSubmit}
-            messages={messages}
-          />
+        <div className={`flex flex-col ${showAdminPanel ? 'w-full lg:w-3/5' : 'w-full'} mr-4 mx-5 lg:mx-0 overflow-hidden`}>
+          <ExampleQueries onQuerySelect={handleQuerySelect} />
+          <div className="flex-grow overflow-hidden">
+            <Chat
+              input={input}
+              handleInputChange={handleInputChange}
+              handleMessageSubmit={handleMessageSubmit}
+              messages={messages}
+            />
+          </div>
         </div>
         {showAdminPanel && (
           <>
