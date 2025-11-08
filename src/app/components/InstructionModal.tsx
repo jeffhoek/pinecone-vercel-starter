@@ -23,25 +23,20 @@ const InstructionModal: React.FC<InstructionModalProps> = ({
         </button>
         <h2 className="text-2xl font-bold mb-4">Instructions</h2>
         <p>
-          This chatbot demonstrates a simple RAG pattern using{" "}
-          <a href="https://pinecone.io" target="_blank" className="text-gray">
-            Pinecone
-          </a>{" "}
-          and Vercel&apos;s AI SDK. In the context panel on the right, you can
-          see some articles you can index in Pinecone (on mobile, open the
-          context panel by clicking the button at the top left of the message
-          panel). Click on the blue link icons to open the URLs in a new window.
+          This chatbot provides an experimental interface to our &quot;Jaco Care&quot;
+          dogsitting Google document. Use the example questions along the top to get started
+          or type your own query and then hit enter to send your question.
         </p>
         <br />
         <p>
-          After you index them, you can ask the chatbot questions about the
-          specific of each article. The segments relevant to the answers the
-          chatbot gives will be highlighted.
+          Keep in mind that sometimes simple short queries may work better
+          than a question in proper sentence form. When in doubt,
+          please go directly to the source document for clarification.
         </p>
         <br />
         <p>
-          You can clear the index by clicking the &quot;Clear Index&quot; button
-          in the context panel.
+          If you spot any errors or anomalies, or have any suggestions for
+          example queries, etc. please let us know.
         </p>
       </div>
       <div
