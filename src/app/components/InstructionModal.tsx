@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { AiFillGithub } from "react-icons/ai";
 
 interface InstructionModalProps {
@@ -10,6 +10,25 @@ const InstructionModal: React.FC<InstructionModalProps> = ({
   isOpen,
   onClose,
 }) => {
+  // Handle Escape key to close modal
+  useEffect(() => {
+    const handleEscapeKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        onClose();
+      }
+    };
+
+    // Only add listener when modal is open
+    if (isOpen) {
+      document.addEventListener('keydown', handleEscapeKey);
+    }
+
+    // Cleanup: remove listener when modal closes or component unmounts
+    return () => {
+      document.removeEventListener('keydown', handleEscapeKey);
+    };
+  }, [isOpen, onClose]);
+
   if (!isOpen) return null;
 
   return (
