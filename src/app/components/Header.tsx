@@ -9,8 +9,8 @@ export default function Header({ className }: { className?: string }) {
       <Image
         src={JacoPhoto}
         alt="Jaco"
-        width="80"
-        height="80"
+        width="96"
+        height="96"
         className="rounded-full object-cover mr-4"
       />
       <h1 className="text-3xl font-bold">Jaco Dog Sitting</h1>
