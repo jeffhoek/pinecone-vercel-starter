@@ -14,10 +14,10 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async signIn({ user, account, profile }) {
       // Optional: Add email whitelist here
-      // const allowedEmails = process.env.ALLOWED_EMAILS?.split(',') || [];
-      // if (allowedEmails.length > 0 && user.email) {
-      //   return allowedEmails.includes(user.email);
-      // }
+      const allowedEmails = process.env.ALLOWED_EMAILS?.split(',') || [];
+      if (allowedEmails.length > 0 && user.email) {
+        return allowedEmails.includes(user.email);
+      }
       return true; // Allow all Google users
     },
     async session({ session, token }) {
