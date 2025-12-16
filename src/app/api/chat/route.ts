@@ -2,8 +2,8 @@ import { openai } from '@ai-sdk/openai'
 import { streamText, convertToCoreMessages } from 'ai'
 import { getContext } from '@/utils/context'
 
-// IMPORTANT! Set the runtime to edge
-export const runtime = 'edge'
+// Use Node.js runtime instead of edge due to module compatibility
+export const runtime = 'nodejs'
 
 export async function POST(req: Request) {
   try {
