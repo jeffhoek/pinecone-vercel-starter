@@ -22,7 +22,7 @@ const nextConfig = {
       };
     }
     return config;
-  },
+  }
 };
 
 module.exports = nextConfig;
