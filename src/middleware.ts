@@ -1,4 +1,6 @@
-export { default } from "next-auth/middleware";
+import auth from "next-auth/middleware";
+
+export default auth;
 
 // Protect all routes except login and API auth routes
 export const config = {

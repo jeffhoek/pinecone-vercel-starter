@@ -1,7 +1,7 @@
-import { Message } from "ai";
+import { UIMessage } from "@ai-sdk/react";
 import { useRef } from "react";
 
-export default function Messages({ messages }: { messages: Message[] }) {
+export default function Messages({ messages }: { messages: UIMessage[] }) {
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   return (
     <div className="border-2 border-gray-600 p-6 rounded-lg overflow-y-auto h-full flex flex-col justify-end bg-gray-700">
@@ -16,7 +16,9 @@ export default function Messages({ messages }: { messages: Message[] }) {
             {msg.role === "assistant" ? "🤖" : "🧑‍💻"}
           </div>
           <div className="ml-2 flex items-center text-gray-200">
-            {msg.content}
+            {msg.parts.map((part, i) =>
+              part.type === 'text' ? <span key={i}>{part.text}</span> : null
+            )}
           </div>
         </div>
       ))}

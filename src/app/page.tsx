@@ -6,7 +6,8 @@ import React, { useEffect, useRef, useState, FormEvent } from "react";
 import { Context } from "@/components/Context";
 import Header from "@/components/Header";
 import Chat from "@/components/Chat";
-import { useChat } from "ai/react";
+import { useChat } from "@ai-sdk/react";
+import { DefaultChatTransport } from "ai";
 import InstructionModal from "./components/InstructionModal";
 import UserMenu from "./components/UserMenu";
 import { ExampleQueries } from "./components/ExampleQueries";
@@ -20,20 +21,32 @@ const Page: React.FC = () => {
   // Check if admin panel should be shown (defaults to true if not set)
   const showAdminPanel = process.env.NEXT_PUBLIC_SHOW_ADMIN_PANEL !== 'false';
 
-  const { messages, input, handleInputChange, handleSubmit, setInput } = useChat({
-    onFinish: async () => {
-      setGotMessages(true);
-    },
+  const { messages, sendMessage } = useChat({
+    id: 'chat',
+    transport: new DefaultChatTransport({
+      api: '/api/chat',
+    }),
   });
 
+  const [input, setInput] = useState('');
   const prevMessagesLengthRef = useRef(messages.length);
   const inputRef = useRef<HTMLInputElement>(null);
 
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInput(e.target.value);
+  };
+
   const handleMessageSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    handleSubmit(e);
+    if (!input.trim()) return;
+
+    const userMessage = input;
+    setInput('');
     setContext(null);
     setGotMessages(false);
+
+    await sendMessage({ role: 'user', parts: [{ type: 'text', text: userMessage }] });
+    setGotMessages(true);
   };
 
   const handleQuerySelect = (query: string) => {
