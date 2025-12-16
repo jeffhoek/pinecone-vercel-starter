@@ -3,8 +3,9 @@
 import { signIn } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 import { FcGoogle } from "react-icons/fc";
+import { Suspense } from "react";
 
-export default function LoginPage() {
+function LoginContent() {
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") || "/";
 
@@ -45,5 +46,17 @@ export default function LoginPage() {
         </p>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex items-center justify-center min-h-screen bg-gray-800">
+        <div className="text-white">Loading...</div>
+      </div>
+    }>
+      <LoginContent />
+    </Suspense>
   );
 }
