@@ -1,6 +1,16 @@
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 import auth from "next-auth/middleware";
 
-export default auth;
+export default function middleware(request: NextRequest) {
+  // Bypass authentication in test mode
+  if (process.env.BYPASS_AUTH === "true") {
+    return NextResponse.next();
+  }
+
+  // Use NextAuth middleware for authentication
+  return auth(request as any);
+}
 
 // Protect all routes except login and API auth routes
 export const config = {

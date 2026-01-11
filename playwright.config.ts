@@ -73,5 +73,9 @@ export default defineConfig({
     command: 'npm run dev',
     url: 'http://127.0.0.1:3000',
     reuseExistingServer: !process.env.CI,
+    env: {
+      BYPASS_AUTH: 'true', // Bypass authentication for tests
+      NEXT_PUBLIC_SHOW_ADMIN_PANEL: 'true', // Show admin panel for tests
+    },
   },
 });
