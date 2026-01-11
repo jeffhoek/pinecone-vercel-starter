@@ -3,7 +3,7 @@ import { test, expect } from '@playwright/test';
 test('has correct title', async ({ page }) => {
   await page.goto('http://localhost:3000');
 
-  await expect(page).toHaveTitle('Pinecone - Vercel AI SDK Example')
+  await expect(page).toHaveTitle('Jaco Dog sitting Chatbot')
 })
 
 test('renders info modal button', async ({ page }) => {
@@ -16,16 +16,8 @@ test('renders info modal button', async ({ page }) => {
 test('renders GitHub repository button', async ({ page }) => {
   await page.goto('http://localhost:3000')
 
-  const infoButtonCount = await page.locator('.github-button').count()
-  await expect(infoButtonCount).toBe(1)
-})
-
-test('renders Vercel deploy button', async ({ page }) => {
-  await page.goto('http://localhost:3000')
-
-  const vercelDeployButtonCount = await page.getByRole('link', { name: 'Deploy' }).count()
-
-  await expect(vercelDeployButtonCount).toBe(1)
+  const githubButtonCount = await page.locator('.github-button').count()
+  await expect(githubButtonCount).toBe(1)
 })
 
 test('renders clear index button', async ({ page }) => {
@@ -36,28 +28,12 @@ test('renders clear index button', async ({ page }) => {
   await expect(clearIndexButtonCount).toBe(1)
 })
 
-test('renders indonesia deforestation button', async ({ page }) => {
+test('renders Jaco Dogsitting button', async ({ page }) => {
   await page.goto('http://localhost:3000')
 
-  const indonesiaDeforestationButtonCount = await page.getByRole('button', { name: 'Indonesia Deforestation' }).count()
+  const jacoDogsittingButtonCount = await page.getByRole('button', { name: 'Jaco Dogsitting' }).count()
 
-  await expect(indonesiaDeforestationButtonCount).toBe(1)
-})
-
-test('renders solar power in India button', async ({ page }) => {
-  await page.goto('http://localhost:3000')
-
-  const solarPowerButtonCount = await page.getByRole('button', { name: 'Solar Power in India' }).count()
-
-  await expect(solarPowerButtonCount).toBe(1)
-})
-
-test('renders matisee thybulle button', async ({ page }) => {
-  await page.goto('http://localhost:3000')
-
-  const matiseeThybulleButtonCount = await page.getByRole('button', { name: 'Matisee Thybulle' }).count()
-
-  await expect(matiseeThybulleButtonCount).toBe(1)
+  await expect(jacoDogsittingButtonCount).toBe(1)
 })
 
 /*test('GitHub button goes to project repository', async ({ page, browserName }) => {
