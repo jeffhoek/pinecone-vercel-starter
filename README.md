@@ -1,13 +1,17 @@
 # Pinecone RAG Chatbot
 
-A production-ready Retrieval Augmented Generation (RAG) chatbot built with Next.js, Pinecone, and OpenAI. This application crawls web pages and Google Docs to create a knowledge base, then uses semantic search to provide accurate, context-aware responses without hallucination.
+A near production-ready Retrieval Augmented Generation (RAG) chatbot built with Next.js, Pinecone, and OpenAI. This application crawls web pages and Google Docs to create a knowledge base, then uses semantic search to provide accurate, context-aware responses without hallucination.
 
 ## Architecture Overview
 
 **Frontend**: Next.js with React, using Vercel AI SDK's `useChat` hook for streaming responses
+
 **Vector Database**: Pinecone for storing and querying document embeddings
+
 **LLM**: OpenAI GPT for generating responses
+
 **Authentication**: NextAuth.js with Google OAuth
+
 **Deployment**: Vercel Edge Functions
 
 ### Key Components
