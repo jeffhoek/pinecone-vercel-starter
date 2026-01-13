@@ -1,18 +1,24 @@
 # Pinecone RAG Chatbot
 
-A near production-ready Retrieval Augmented Generation (RAG) chatbot built with Next.js, Pinecone, and OpenAI. This application crawls web pages and Google Docs to create a knowledge base, then uses semantic search to provide accurate, context-aware responses without hallucination.
+A Retrieval Augmented Generation (RAG) chatbot built with Next.js, Pinecone, and OpenAI. This application crawls web pages and Google Docs to create a knowledge base, then uses semantic search to provide accurate, context-aware responses without hallucination.
+
+> NOTE: This repo originated as a fork of [pinecone-vercel-starter](https://github.com/nicoalbanese/pinecone-vercel-starter/tree/main). Several vibe-coded enhancements (using Claude Code) have been made including:
+
+- Basic UI/branding customizations
+- Data preparation and ingest from Google Docs
+- Authentication for ingest from private Google Docs
+- Optional admin panel
+- User authentication using Oauth2 and allow list
+- Fixes for CVEs and vulnerabilities
+
 
 ## Architecture Overview
 
-**Frontend**: Next.js with React, using Vercel AI SDK's `useChat` hook for streaming responses
-
-**Vector Database**: Pinecone for storing and querying document embeddings
-
-**LLM**: OpenAI GPT for generating responses
-
-**Authentication**: NextAuth.js with Google OAuth
-
-**Deployment**: Vercel Edge Functions
+- **Frontend**: Next.js with React, using Vercel AI SDK's `useChat` hook for streaming responses
+- **Vector Database**: Pinecone for storing and querying document embeddings
+- **LLM**: OpenAI GPT for generating responses
+- **Authentication**: NextAuth.js with Google OAuth
+- **Deployment**: Vercel Edge Functions
 
 ### Key Components
 
@@ -41,7 +47,7 @@ A near production-ready Retrieval Augmented Generation (RAG) chatbot built with 
 ```bash
 npm install
 cp .env.example .env
-# Edit .env with your API keys
+# Edit .env with your API keys and other secrets
 npm run dev
 ```
 
