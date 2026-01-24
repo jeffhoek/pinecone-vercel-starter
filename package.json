@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "@ai-sdk/openai": "^2.0.87",
-    "@ai-sdk/react": "^2.0.115",
+    "@ai-sdk/react": "^2.0.119",
     "@pinecone-database/doc-splitter": "^0.0.1",
     "@pinecone-database/pinecone": "^6.1.3",
     "@tailwindcss/postcss": "^4.1.18",
