@@ -1,5 +1,7 @@
 # Pinecone RAG Chatbot
 
+[![Playwright Tests](https://github.com/jeffhoek/pinecone-vercel-starter/actions/workflows/playwright.yml/badge.svg)](https://github.com/jeffhoek/pinecone-vercel-starter/actions/workflows/playwright.yml)
+
 A Retrieval Augmented Generation (RAG) chatbot built with Next.js, Pinecone, and OpenAI. This application crawls web pages and Google Docs to create a knowledge base, then uses semantic search to provide accurate, context-aware responses without hallucination.
 
 > NOTE: This repo originated as a fork of [pinecone-vercel-starter](https://github.com/nicoalbanese/pinecone-vercel-starter/tree/main). Several vibe-coded enhancements (using Claude Code) have been made including:
