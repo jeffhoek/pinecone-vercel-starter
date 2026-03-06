@@ -2,7 +2,7 @@
 
 [![Playwright Tests](https://github.com/jeffhoek/pinecone-vercel-starter/actions/workflows/playwright.yml/badge.svg)](https://github.com/jeffhoek/pinecone-vercel-starter/actions/workflows/playwright.yml)
 
-A Retrieval Augmented Generation (RAG) chatbot built with Next.js, Pinecone, and OpenAI. This application crawls web pages and Google Docs to create a knowledge base, then uses semantic search to provide accurate, context-aware responses without hallucination.
+A Retrieval Augmented Generation (RAG) chatbot built with Next.js, Pinecone, and OpenAI. This application crawls web pages and Google Docs to create a knowledge base, then uses semantic search to provide accurate, context-aware responses.
 
 > NOTE: This repo originated as a fork of [pinecone-vercel-starter](https://github.com/nicoalbanese/pinecone-vercel-starter/tree/main). Several vibe-coded enhancements (using Claude Code) have been made including:
 
@@ -10,9 +10,8 @@ A Retrieval Augmented Generation (RAG) chatbot built with Next.js, Pinecone, and
 - Data preparation and ingest from Google Docs
 - Authentication for ingest from private Google Docs
 - Optional admin panel
-- User authentication using Oauth2 and allow list
+- User authentication using OAuth2 and allow list
 - Fixes for CVEs and vulnerabilities
-
 
 ## Architecture Overview
 
@@ -40,91 +39,109 @@ A Retrieval Augmented Generation (RAG) chatbot built with Next.js, Pinecone, and
 ### Prerequisites
 
 - Node.js 18+
-- [Pinecone](https://www.pinecone.io) account and API key
+- [Pinecone](https://www.pinecone.io) account with a 1536-dimension cosine index
 - [OpenAI](https://platform.openai.com) API key
 - [Google Cloud](https://console.cloud.google.com) OAuth credentials
 
-### Installation
+### Setup Checklist
+
+**Step 1: Google OAuth** (~15 min) — see [GOOGLE_OAUTH_SETUP.md](GOOGLE_OAUTH_SETUP.md) for full details
+
+- [ ] Create Google Cloud project → **APIs & Services > OAuth consent screen** → configure as External
+- [ ] **APIs & Services > Credentials > Create Credentials > OAuth client ID** (Web application)
+- [ ] Add authorized JavaScript origin: `http://localhost:3000`
+- [ ] Add authorized redirect URI: `http://localhost:3000/api/auth/callback/google`
+- [ ] Copy the Client ID and Client Secret
+
+**Step 2: Environment variables** (~5 min)
+
+```bash
+cp .env.example .env
+openssl rand -base64 32   # paste output as NEXTAUTH_SECRET
+```
+
+Fill in `.env`:
+
+```bash
+OPENAI_API_KEY=sk-...
+PINECONE_API_KEY=pc-...
+PINECONE_CLOUD=aws
+PINECONE_REGION=us-east-1
+PINECONE_INDEX=your-index-name
+NEXTAUTH_URL=http://localhost:3000
+NEXTAUTH_SECRET=<generated above>
+GOOGLE_CLIENT_ID=<from step 1>
+GOOGLE_CLIENT_SECRET=<from step 1>
+```
+
+**Step 3: Install and run**
 
 ```bash
 npm install
-cp .env.example .env
-# Edit .env with your API keys and other secrets
 npm run dev
 ```
 
-See [SETUP_CHECKLIST.md](SETUP_CHECKLIST.md) for detailed setup instructions.
+Visit `http://localhost:3000` — you should be redirected to the login page. Sign in with Google, authorize the app, and you'll land on the chatbot.
+
+**Step 4: Optional — Google Docs access**
+
+To crawl private Google Docs, set up a service account. See [GOOGLE_AUTH_SETUP.md](GOOGLE_AUTH_SETUP.md).
+
+```bash
+# Minify the downloaded service account JSON to a single line:
+cat key.json | jq -c
+# Paste output as GOOGLE_SERVICE_ACCOUNT_KEY in .env
+```
+
+Share each target Google Doc with the service account email (Viewer access).
+
+**Step 5: Optional — restrict by email**
+
+To allow only specific users, set `ALLOWED_EMAILS` in `.env` and uncomment the email whitelist in `src/app/api/auth/[...nextauth]/route.ts`.
+
+```bash
+ALLOWED_EMAILS=user1@gmail.com,user2@gmail.com
+```
 
 ## Configuration
 
-### Authentication (Required)
+### Admin Panel
 
-All routes require Google OAuth authentication. Users must sign in with an authorized Google account to access the application.
+The right-hand admin panel lets you crawl URLs, clear the index, and configure chunking. Control visibility with:
 
-**Setup**: See [GOOGLE_OAUTH_SETUP.md](GOOGLE_OAUTH_SETUP.md) for detailed instructions.
+```bash
+NEXT_PUBLIC_SHOW_ADMIN_PANEL=true   # local development (default)
+NEXT_PUBLIC_SHOW_ADMIN_PANEL=false  # production (hides panel, disables context API calls)
+```
 
-Required environment variables:
-- `GOOGLE_CLIENT_ID`
-- `GOOGLE_CLIENT_SECRET`
-- `NEXTAUTH_SECRET`
-- `ALLOWED_EMAILS` (optional - restrict to specific users)
+When hidden, the chat takes the full width and context fetching is skipped for a slight performance gain.
 
-Implementation: [`src/lib/auth.ts`](src/lib/auth.ts), [`src/middleware.ts`](src/middleware.ts)
+### Authentication
 
-### Admin Panel (Optional)
+All routes require Google OAuth. Implementation: [`src/lib/auth.ts`](src/lib/auth.ts), [`src/middleware.ts`](src/middleware.ts).
 
-The admin panel provides dataset management capabilities including crawling URLs, clearing the index, and configuring document splitting methods.
-
-**Configuration**: See [ADMIN_PANEL.md](ADMIN_PANEL.md) for visibility control.
-
-- Set `NEXT_PUBLIC_SHOW_ADMIN_PANEL=true` for local development
-- Set `NEXT_PUBLIC_SHOW_ADMIN_PANEL=false` to hide in production
-
-Implementation: [`src/app/components/Context/index.tsx`](src/app/components/Context/index.tsx)
-
-### Google Docs Access (Optional)
-
-Enable crawling of private Google Docs by setting up a Google Service Account.
-
-**Setup**: See [GOOGLE_AUTH_SETUP.md](GOOGLE_AUTH_SETUP.md) for detailed instructions.
-
-Required environment variable:
-- `GOOGLE_SERVICE_ACCOUNT_KEY` (minified JSON)
-
-Implementation: [`src/app/utils/googleDrive.ts`](src/app/utils/googleDrive.ts)
+Protected routes redirect to `/login`. Unprotected: `/api/auth/*`, `/login`, `/_next/*`.
 
 ## How It Works
 
 ### 1. Document Ingestion
 
-The application crawls web pages and Google Docs using [`crawler.ts`](src/app/api/crawl/crawler.ts), which:
-- Fetches HTML content from URLs
-- Converts HTML to Markdown using Cheerio
-- Extracts links for breadth-first traversal (configurable depth)
+The crawler ([`crawler.ts`](src/app/api/crawl/crawler.ts)) fetches HTML, converts it to Markdown, and follows links breadth-first. Documents are split into chunks ([`seed.ts`](src/app/api/crawl/seed.ts)) using either:
 
-Documents are split into chunks using one of two strategies (see [`seed.ts`](src/app/api/crawl/seed.ts)):
-- **Recursive**: Fixed-size chunks with overlap (configurable size/overlap)
+- **Recursive**: Fixed-size chunks with overlap
 - **Markdown**: Splits on headers to preserve semantic structure
 
-Each chunk is embedded using OpenAI's `text-embedding-ada-002` model ([`embeddings.ts`](src/app/utils/embeddings.ts)) and stored in Pinecone with metadata (URL, text content).
+Each chunk is embedded with OpenAI's `text-embedding-ada-002` and stored in Pinecone with URL and text metadata.
 
 ### 2. Query Processing
 
-When a user sends a message:
+1. **Query preprocessing** ([`queryPreprocessing.ts`](src/app/utils/queryPreprocessing.ts)): Strips stop words and question words before embedding (`"Does Jaco have health concerns?"` → `"jaco health concerns"`), improving cosine similarity against document embeddings. The original query is still passed to the LLM.
 
-1. **Query Enhancement** ([`queryPreprocessing.ts`](src/app/utils/queryPreprocessing.ts)): The query is optionally enhanced using GPT to improve retrieval accuracy. See [QUERY_PREPROCESSING.md](QUERY_PREPROCESSING.md) for details.
+2. **Semantic search** ([`context.ts`](src/app/utils/context.ts)): The preprocessed query is embedded and matched against Pinecone (top-3 chunks, min score 0.7).
 
-2. **Semantic Search** ([`context.ts`](src/app/utils/context.ts)):
-   - User query is embedded using the same OpenAI model
-   - Pinecone performs cosine similarity search against indexed chunks
-   - Top-K most relevant chunks are retrieved (default: 3, min score: 0.7)
+3. **Context injection** ([`chat/route.ts`](src/app/api/chat/route.ts)): Retrieved chunks are prepended to the system prompt; OpenAI generates a response grounded in that context.
 
-3. **Context Injection** ([`chat/route.ts`](src/app/api/chat/route.ts)):
-   - Retrieved chunks are concatenated into a context block
-   - Context is injected into the system prompt
-   - OpenAI generates a response using only the provided context
-
-4. **Streaming Response**: The response is streamed back to the client using Vercel AI SDK's `StreamingTextResponse`.
+4. **Streaming**: Response is streamed back via Vercel AI SDK.
 
 ### 3. UI Components
 
@@ -134,9 +151,7 @@ When a user sends a message:
 
 ## Deployment
 
-Deploy to Vercel with one click or manually configure environment variables.
-
-**Full guide**: See [VERCEL_DEPLOYMENT.md](VERCEL_DEPLOYMENT.md) for step-by-step deployment instructions.
+See [VERCEL_DEPLOYMENT.md](VERCEL_DEPLOYMENT.md) for full step-by-step instructions including Pinecone index setup, troubleshooting function timeouts, and viewing logs.
 
 ### Required Environment Variables
 
@@ -162,16 +177,13 @@ ALLOWED_EMAILS=user1@example.com,user2@example.com
 NEXT_PUBLIC_SHOW_ADMIN_PANEL=false
 ```
 
+After adding variables in Vercel, remember to also update your Google OAuth credentials to add the production redirect URI: `https://your-app.vercel.app/api/auth/callback/google`.
+
 ## Testing
 
-The application uses Playwright for end-to-end testing.
-
 ```bash
-# Run all tests
-npm run test:e2e
-
-# Show test report
-npm run test:show
+npm run test:e2e   # run Playwright tests
+npm run test:show  # view test report
 ```
 
 ## Project Structure
@@ -202,14 +214,10 @@ src/
 
 ## Additional Documentation
 
-- [SETUP_CHECKLIST.md](SETUP_CHECKLIST.md) - Step-by-step setup guide
-- [GOOGLE_OAUTH_SETUP.md](GOOGLE_OAUTH_SETUP.md) - Google OAuth configuration
-- [GOOGLE_AUTH_SETUP.md](GOOGLE_AUTH_SETUP.md) - Google Docs authentication
-- [ADMIN_PANEL.md](ADMIN_PANEL.md) - Admin panel configuration
-- [QUERY_PREPROCESSING.md](QUERY_PREPROCESSING.md) - Query enhancement details
-- [VERCEL_DEPLOYMENT.md](VERCEL_DEPLOYMENT.md) - Deployment guide
+- [GOOGLE_OAUTH_SETUP.md](GOOGLE_OAUTH_SETUP.md) - Google OAuth step-by-step (consent screen, credentials, redirect URIs, troubleshooting)
+- [GOOGLE_AUTH_SETUP.md](GOOGLE_AUTH_SETUP.md) - Google Docs service account setup
+- [VERCEL_DEPLOYMENT.md](VERCEL_DEPLOYMENT.md) - Vercel deployment guide
 
 ## License
 
 MIT
-
