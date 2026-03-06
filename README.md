@@ -18,7 +18,7 @@ A Retrieval Augmented Generation (RAG) chatbot built with Next.js, Pinecone, and
 - **Frontend**: Next.js with React, using Vercel AI SDK's `useChat` hook for streaming responses
 - **Vector Database**: Pinecone for storing and querying document embeddings
 - **LLM**: OpenAI GPT for generating responses
-- **Authentication**: NextAuth.js with Google OAuth
+- **Authentication**: NextAuth.js (passphrase or Google OAuth)
 - **Deployment**: Vercel Edge Functions
 
 ### Key Components
@@ -41,17 +41,29 @@ A Retrieval Augmented Generation (RAG) chatbot built with Next.js, Pinecone, and
 - Node.js 18+
 - [Pinecone](https://www.pinecone.io) account with a 1536-dimension cosine index
 - [OpenAI](https://platform.openai.com) API key
-- [Google Cloud](https://console.cloud.google.com) OAuth credentials
+- One auth method configured (see Step 1 below)
 
 ### Setup Checklist
 
-**Step 1: Google OAuth** (~15 min) — see [GOOGLE_OAUTH_SETUP.md](GOOGLE_OAUTH_SETUP.md) for full details
+**Step 1: Choose an auth method** — at least one is required
+
+**Option A — Passphrase** (simplest, no external accounts):
+
+```bash
+APP_PASSWORD=your-chosen-passphrase
+```
+
+Anyone with the passphrase can log in. Good for self-hosted or small team use.
+
+**Option B — Google OAuth** (~15 min) — see [GOOGLE_OAUTH_SETUP.md](GOOGLE_OAUTH_SETUP.md) for full details
 
 - [ ] Create Google Cloud project → **APIs & Services > OAuth consent screen** → configure as External
 - [ ] **APIs & Services > Credentials > Create Credentials > OAuth client ID** (Web application)
 - [ ] Add authorized JavaScript origin: `http://localhost:3000`
 - [ ] Add authorized redirect URI: `http://localhost:3000/api/auth/callback/google`
-- [ ] Copy the Client ID and Client Secret
+- [ ] Copy the Client ID and Client Secret into `.env` as `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET`
+
+Both options can be active at the same time — the login page shows whichever providers are configured.
 
 **Step 2: Environment variables** (~5 min)
 
@@ -60,7 +72,7 @@ cp .env.example .env
 openssl rand -base64 32   # paste output as NEXTAUTH_SECRET
 ```
 
-Fill in `.env`:
+Minimum `.env` for passphrase auth:
 
 ```bash
 OPENAI_API_KEY=sk-...
@@ -70,8 +82,7 @@ PINECONE_REGION=us-east-1
 PINECONE_INDEX=your-index-name
 NEXTAUTH_URL=http://localhost:3000
 NEXTAUTH_SECRET=<generated above>
-GOOGLE_CLIENT_ID=<from step 1>
-GOOGLE_CLIENT_SECRET=<from step 1>
+APP_PASSWORD=<your-chosen-passphrase>
 ```
 
 **Step 3: Install and run**
@@ -81,7 +92,7 @@ npm install
 npm run dev
 ```
 
-Visit `http://localhost:3000` — you should be redirected to the login page. Sign in with Google, authorize the app, and you'll land on the chatbot.
+Visit `http://localhost:3000` — you'll be redirected to the login page. Sign in with your chosen method and you'll land on the chatbot.
 
 **Step 4: Optional — Google Docs access**
 
@@ -118,8 +129,14 @@ When hidden, the chat takes the full width and context fetching is skipped for a
 
 ### Authentication
 
-All routes require Google OAuth. Implementation: [`src/lib/auth.ts`](src/lib/auth.ts), [`src/middleware.ts`](src/middleware.ts).
+All routes are protected. At least one provider must be configured or nobody can log in.
 
+| Provider | Env vars needed | Notes |
+|---|---|---|
+| Passphrase | `APP_PASSWORD` | Single shared passphrase, no external accounts |
+| Google OAuth | `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` | Per-user, supports `ALLOWED_EMAILS` whitelist |
+
+Implementation: [`src/lib/auth.ts`](src/lib/auth.ts), [`src/middleware.ts`](src/middleware.ts).
 Protected routes redirect to `/login`. Unprotected: `/api/auth/*`, `/login`, `/_next/*`.
 
 ## How It Works
@@ -165,11 +182,18 @@ PINECONE_CLOUD=aws
 PINECONE_REGION=us-east-1
 PINECONE_INDEX=your-index-name
 
-# NextAuth
-GOOGLE_CLIENT_ID=...
-GOOGLE_CLIENT_SECRET=...
+# NextAuth (required)
 NEXTAUTH_SECRET=...
 NEXTAUTH_URL=https://your-app.vercel.app
+
+# Auth — at least one of the following blocks is required
+
+# Option A: Passphrase
+APP_PASSWORD=...
+
+# Option B: Google OAuth
+GOOGLE_CLIENT_ID=...
+GOOGLE_CLIENT_SECRET=...
 
 # Optional
 GOOGLE_SERVICE_ACCOUNT_KEY={"type":"service_account",...}
@@ -177,7 +201,8 @@ ALLOWED_EMAILS=user1@example.com,user2@example.com
 NEXT_PUBLIC_SHOW_ADMIN_PANEL=false
 ```
 
-After adding variables in Vercel, remember to also update your Google OAuth credentials to add the production redirect URI: `https://your-app.vercel.app/api/auth/callback/google`.
+If using Google OAuth, also add the production redirect URI in Google Cloud Console:
+`https://your-app.vercel.app/api/auth/callback/google`.
 
 ## Testing
 

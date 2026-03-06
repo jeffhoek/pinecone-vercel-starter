@@ -2,6 +2,7 @@
 const nextConfig = {
   // Enable Turbopack with empty config to use defaults
   turbopack: {},
+  devIndicators: false,
   webpack: (config, { isServer }) => {
     // Fix for googleapis and other packages that use Node.js built-in modules
     if (!isServer) {
