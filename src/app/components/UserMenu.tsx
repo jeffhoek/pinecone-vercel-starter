@@ -43,7 +43,7 @@ export default function UserMenu() {
           />
 
           {/* Dropdown menu */}
-          <div className="absolute right-0 mt-2 w-64 bg-gray-700 rounded-lg shadow-xl z-20 overflow-hidden">
+          <div className="absolute left-0 mt-2 w-64 bg-gray-700 rounded-lg shadow-xl z-20 overflow-hidden">
             <div className="px-4 py-3 border-b border-gray-600">
               <p className="text-sm text-gray-400">Signed in as</p>
               <p className="text-white font-medium truncate">
