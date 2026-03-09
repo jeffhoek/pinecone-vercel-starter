@@ -38,6 +38,9 @@
     "typescript": "5.9.3",
     "unified": "^11.0.5"
   },
+  "overrides": {
+    "preact": "10.26.10"
+  },
   "devDependencies": {
     "@playwright/test": "^1.57.0",
     "@types/md5": "^2.3.6"
